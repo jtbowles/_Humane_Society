@@ -169,37 +169,52 @@ namespace HumaneSociety
             switch (crudOperation)
             {
                 case "create":
+                    // check for registration number
                     AddEmployee(employee);
                     break;
 
                 case "read":
-                    int? numToCheck = employee.EmployeeNumber;
-                    ReadEmployee(numToCheck);
-
+                    ReadEmployee(employee);
                     break;
 
                 case "update":
+                    UpdateEmployee(employee);
                     break;
 
                 case "delete":
+                    DeleteEmployee(employee);
                     break;
 
                 default:
                     break;
             }
-            throw new NotImplementedException();
-        }
-
-
-        internal static void ReadEmployee(int? employeeNumber)
-        {
-            Employee employeeFound = db.Employees.Where(e => e.EmployeeNumber == employeeNumber).Select(e => e).Single();
-            UserInterface.DisplayEmployeeInfo(employeeFound);
         }
 
         internal static void AddEmployee(Employee employee)
         {
             db.Employees.InsertOnSubmit(employee);
+            db.SubmitChanges();
+        }
+
+        internal static void ReadEmployee(Employee employee)
+        {
+            Employee employeeFound = db.Employees.Where(e => e.EmployeeNumber == employee.EmployeeNumber).Single();
+            UserInterface.DisplayEmployeeInfo(employeeFound);
+        }
+
+        internal static void UpdateEmployee(Employee employee)
+        {
+            Employee employeeToUpdate = db.Employees.Where(e => e.EmployeeNumber == employee.EmployeeNumber && e.LastName == employee.LastName).Single();
+            employeeToUpdate.FirstName = employee.FirstName;
+            employeeToUpdate.LastName = employee.LastName;
+            employeeToUpdate.Email = employee.Email;
+            db.SubmitChanges();
+        }
+
+        internal static void DeleteEmployee(Employee employee)
+        {
+            Employee employeeToDelete = db.Employees.Where(e => e.EmployeeNumber == employee.EmployeeNumber && e.LastName == employee.LastName).Single();
+            db.Employees.DeleteOnSubmit(employeeToDelete);
             db.SubmitChanges();
         }
 
