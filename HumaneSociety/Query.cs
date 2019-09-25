@@ -80,7 +80,7 @@ namespace HumaneSociety
             {
                 clientFromDb = db.Clients.Where(c => c.ClientId == clientWithUpdates.ClientId).Single();
             }
-            catch(InvalidOperationException e)
+            catch(InvalidOperationException)
             {
                 Console.WriteLine("No clients have a ClientId that matches the Client passed in.");
                 Console.WriteLine("No update have been made.");
@@ -166,8 +166,43 @@ namespace HumaneSociety
         // TODO: Allow any of the CRUD operations to occur here
         internal static void RunEmployeeQueries(Employee employee, string crudOperation)
         {
+            switch (crudOperation)
+            {
+                case "create":
+                    AddEmployee(employee);
+                    break;
+
+                case "read":
+                    int? numToCheck = employee.EmployeeNumber;
+                    ReadEmployee(numToCheck);
+
+                    break;
+
+                case "update":
+                    break;
+
+                case "delete":
+                    break;
+
+                default:
+                    break;
+            }
             throw new NotImplementedException();
         }
+
+
+        internal static void ReadEmployee(int? employeeNumber)
+        {
+            Employee employeeFound = db.Employees.Where(e => e.EmployeeNumber == employeeNumber).Select(e => e).Single();
+            UserInterface.DisplayEmployeeInfo(employeeFound);
+        }
+
+        internal static void AddEmployee(Employee employee)
+        {
+            db.Employees.InsertOnSubmit(employee);
+            db.SubmitChanges();
+        }
+
 
         // TODO: Animal CRUD Operations
         internal static void AddAnimal(Animal animal)

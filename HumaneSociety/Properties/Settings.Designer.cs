@@ -82,7 +82,11 @@ namespace HumaneSociety.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+<<<<<<< HEAD
         [global::System.Configuration.DefaultSettingValueAttribute("Data Source=DESKTOP-PIEB7OV\\SQLEXPRESS;Initial Catalog=HumaneSociety;Integrated S" +
+=======
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=DESKTOP-7RBUGN5\\SQLEXPRESS;Initial Catalog=HumaneSociety;Integrated S" +
+>>>>>>> 354d723b15f4c874e7842947f83ac0461470f429
             "ecurity=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False")]
         public string HumaneSocietyConnectionString4 {
             get {
