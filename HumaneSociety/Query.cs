@@ -163,7 +163,6 @@ namespace HumaneSociety
 
         //// TODO Items: ////
         
-        // TODO: Allow any of the CRUD operations to occur here
         internal static void RunEmployeeQueries(Employee employee, string crudOperation)
         {
             switch (crudOperation)
@@ -240,8 +239,7 @@ namespace HumaneSociety
             throw new NotImplementedException();
         }
         
-        // TODO: Animal Multi-Trait Search
-        internal static IQueryable<Animal> SearchForAnimalsByMultipleTraits(Dictionary<int, string> updates) // parameter(s)?
+        internal static IQueryable<Animal> SearchForAnimalsByMultipleTraits(Dictionary<int, string> updates) 
         {
             var animalsFromDbToQueryable = db.Animals.AsQueryable();
 
@@ -250,54 +248,43 @@ namespace HumaneSociety
                 switch (criterion.Key)
                 {
                     case 1:
-                        // category
-                        // convert value to foreign key value or Category data type and pass in
-                        // var refinedCategorySearch = db.Animals.Where(a => a.Category == criterion.Value);
+                        int categoryID = db.Categories.Where(c => c.Name == criterion.Value).Select(c => c.CategoryId).Single();
+                        var refinedCategorySearch = animalsFromDbToQueryable.Where(a => a.CategoryId == categoryID);
+                        animalsFromDbToQueryable = refinedCategorySearch;
                         break;
 
                     case 2:
-                        // animal.Name
-                        //Console.WriteLine("Enter the name of the animal you wish to search for: ");
-                        //var animalNameChoice = Console.ReadLine();
-                        var refinedNameSearch = db.Animals.Where(a => a.Name == criterion.Value);
+                        var refinedNameSearch = animalsFromDbToQueryable.Where(a => a.Name == criterion.Value);
                         animalsFromDbToQueryable = refinedNameSearch.AsQueryable();
                         break;
 
                     case 3:
-                        // animal.Age
-                        var refinedAgeSearch = db.Animals.Where(a => a.Gender == criterion.Value);
+                        var refinedAgeSearch = animalsFromDbToQueryable.Where(a => a.Gender == criterion.Value);
                         animalsFromDbToQueryable = refinedAgeSearch.AsQueryable();
                         break;
 
                     case 4:
-                        // animal.Demeanor
-                        var refinedDemeanorSearch = db.Animals.Where(a => a.Demeanor == criterion.Value);
+                        var refinedDemeanorSearch = animalsFromDbToQueryable.Where(a => a.Demeanor == criterion.Value);
                         animalsFromDbToQueryable = refinedDemeanorSearch.AsQueryable();
                         break;
 
                     case 5:
-                        // animal.KidFriendly
-                        // IS KID FRIENDLY
-                        var refinedKidFriendlySearch = db.Animals.Where(a => a.KidFriendly == bool.Parse(criterion.Value));
+                        var refinedKidFriendlySearch = animalsFromDbToQueryable.Where(a => a.KidFriendly == bool.Parse(criterion.Value));
                         animalsFromDbToQueryable = refinedKidFriendlySearch.AsQueryable();
                         break;
 
                     case 6:
-                        // animal.PetFriendly
-                        // IS PET FRIENDLY
-                        var refinedPetFriendlySearch = db.Animals.Where(a => a.PetFriendly == bool.Parse(criterion.Value));
+                        var refinedPetFriendlySearch = animalsFromDbToQueryable.Where(a => a.PetFriendly == bool.Parse(criterion.Value));
                         animalsFromDbToQueryable = refinedPetFriendlySearch.AsQueryable();
                         break;
 
                     case 7:
-                        // animal.Weight
-                        var refinedWeightSearch = db.Animals.Where(a => a.Weight == Int32.Parse(criterion.Value));
+                        var refinedWeightSearch = animalsFromDbToQueryable.Where(a => a.Weight == Int32.Parse(criterion.Value));
                         animalsFromDbToQueryable = refinedWeightSearch.AsQueryable();
                         break;
 
                     case 8:
-                        // animal.AnimalId
-                        var refinedIdSearch = db.Animals.Where(a => a.AnimalId == Int32.Parse(criterion.Value));
+                        var refinedIdSearch = animalsFromDbToQueryable.Where(a => a.AnimalId == Int32.Parse(criterion.Value));
                         animalsFromDbToQueryable = refinedIdSearch.AsQueryable();
                         break;
 
