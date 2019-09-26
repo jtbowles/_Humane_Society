@@ -187,10 +187,7 @@ namespace HumaneSociety
                 default:
                     break;
             }
-<<<<<<< HEAD
-            
-=======
->>>>>>> 81937f84145057d1e00e7ec945f921b440fb1fe4
+
         }
 
         internal static void AddEmployee(Employee employee)
@@ -321,7 +318,13 @@ namespace HumaneSociety
         // TODO: Adoption CRUD Operations
         internal static void Adopt(Animal animal, Client client)
         {
-            throw new NotImplementedException();
+            Adoption newAdoption = new Adoption();
+            newAdoption.ClientId = client.ClientId;
+            newAdoption.AnimalId = animal.AnimalId;
+            newAdoption.ApprovalStatus = "pending";
+            newAdoption.AdoptionFee = 75;
+            db.Adoptions.InsertOnSubmit(newAdoption);
+            db.SubmitChanges();
         }
 
         internal static IQueryable<Adoption> GetPendingAdoptions()
