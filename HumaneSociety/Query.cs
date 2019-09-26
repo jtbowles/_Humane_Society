@@ -243,7 +243,7 @@ namespace HumaneSociety
         // TODO: Animal Multi-Trait Search
         internal static IQueryable<Animal> SearchForAnimalsByMultipleTraits(Dictionary<int, string> updates) // parameter(s)?
         {
-            var animalsFromDbToList = db.Animals.AsQueryable();
+            var animalsFromDbToQueryable = db.Animals.AsQueryable();
 
             foreach (var criterion in updates)
             {
@@ -260,54 +260,52 @@ namespace HumaneSociety
                         //Console.WriteLine("Enter the name of the animal you wish to search for: ");
                         //var animalNameChoice = Console.ReadLine();
                         var refinedNameSearch = db.Animals.Where(a => a.Name == criterion.Value);
-                        animalsFromDbToList = refinedNameSearch.AsQueryable();
+                        animalsFromDbToQueryable = refinedNameSearch.AsQueryable();
                         break;
 
                     case 3:
                         // animal.Age
                         var refinedAgeSearch = db.Animals.Where(a => a.Gender == criterion.Value);
-                        animalsFromDbToList = refinedAgeSearch.AsQueryable();
+                        animalsFromDbToQueryable = refinedAgeSearch.AsQueryable();
                         break;
 
                     case 4:
                         // animal.Demeanor
                         var refinedDemeanorSearch = db.Animals.Where(a => a.Demeanor == criterion.Value);
-                        animalsFromDbToList = refinedDemeanorSearch.AsQueryable();
+                        animalsFromDbToQueryable = refinedDemeanorSearch.AsQueryable();
                         break;
 
                     case 5:
                         // animal.KidFriendly
                         // IS KID FRIENDLY
                         var refinedKidFriendlySearch = db.Animals.Where(a => a.KidFriendly == bool.Parse(criterion.Value));
-                        animalsFromDbToList = refinedKidFriendlySearch.AsQueryable();
+                        animalsFromDbToQueryable = refinedKidFriendlySearch.AsQueryable();
                         break;
 
                     case 6:
                         // animal.PetFriendly
                         // IS PET FRIENDLY
                         var refinedPetFriendlySearch = db.Animals.Where(a => a.PetFriendly == bool.Parse(criterion.Value));
-                        animalsFromDbToList = refinedPetFriendlySearch.AsQueryable();
+                        animalsFromDbToQueryable = refinedPetFriendlySearch.AsQueryable();
                         break;
 
                     case 7:
                         // animal.Weight
                         var refinedWeightSearch = db.Animals.Where(a => a.Weight == Int32.Parse(criterion.Value));
-                        animalsFromDbToList = refinedWeightSearch.AsQueryable();
+                        animalsFromDbToQueryable = refinedWeightSearch.AsQueryable();
                         break;
 
                     case 8:
                         // animal.AnimalId
                         var refinedIdSearch = db.Animals.Where(a => a.AnimalId == Int32.Parse(criterion.Value));
-                        animalsFromDbToList = refinedIdSearch.AsQueryable();
+                        animalsFromDbToQueryable = refinedIdSearch.AsQueryable();
                         break;
 
                     default:
                         break;
                 }
             }
-
-            var animalsFromDb = animalsFromDbToList.AsQueryable();
-            return animalsFromDb;
+            return animalsFromDbToQueryable;
         }
          
         // TODO: Misc Animal Things
