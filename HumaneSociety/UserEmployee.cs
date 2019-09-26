@@ -194,7 +194,7 @@ namespace HumaneSociety
             else
             {
                 updates = UserInterface.EnterSearchCriteria(updates, input);
-                UpdateAnimal(animal, updates);
+                UpdateAnimal(animal, updates);    //// recursion
             }
         }
 
