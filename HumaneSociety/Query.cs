@@ -221,6 +221,8 @@ namespace HumaneSociety
         // TODO: Animal CRUD Operations
         internal static void AddAnimal(Animal animal)
         {
+            CreateRoom();
+            AssignAnimalToRoom(animal);
             db.Animals.InsertOnSubmit(animal);
             db.SubmitChanges();
         }
@@ -341,14 +343,27 @@ namespace HumaneSociety
         {
             return db.Rooms.Where(r => r.AnimalId == animalId).Single();
         }
-        
+
+        internal static void CreateRoom()
+        {
+            Room newRoom = new Room();
+            newRoom.RoomNumber = newRoom.RoomId;
+            db.Rooms.InsertOnSubmit(newRoom);
+            db.SubmitChanges();
+        }
+
+        internal static void AssignAnimalToRoom(Animal animal)
+        {
+            var openRoom = db.Rooms.Where(r => r.AnimalId == null).First();
+            openRoom.AnimalId = animal.AnimalId;
+            db.SubmitChanges();
+        }
+
         internal static int GetDietPlanId(string dietPlanName)
         {
             return db.DietPlans.Where(d => d.Name == dietPlanName).Select(d => d.DietPlanId).Single();
         }
       
-
-    // TODO: Adoption CRUD Operations
         internal static void Adopt(Animal animal, Client client)
         {
             // customer => set adoption to PENDING 
@@ -356,14 +371,15 @@ namespace HumaneSociety
 
         internal static IQueryable<Adoption> GetPendingAdoptions()
         {
-            return db.Adoptions.Where(a => a.ApprovalStatus == "PENDING").AsQueryable();
+            return db.Adoptions.Where(a => a.ApprovalStatus.ToUpper() == "PENDING").AsQueryable();
         }
 
         internal static void UpdateAdoption(bool isAdopted, Adoption adoption)
         {
             if (isAdopted)
             {
-                db.Adoptions.InsertOnSubmit(adoption);
+                Adoption updatedAdoption = db.Adoptions.Where(a => a.ClientId == adoption.ClientId && a.AnimalId == adoption.AnimalId).Single();
+                updatedAdoption.ApprovalStatus = "APPROVED";
                 db.SubmitChanges();
             }
             else
@@ -375,19 +391,24 @@ namespace HumaneSociety
         internal static void RemoveAdoption(int animalId, int clientId)
         {
             var adoptionToRemove = db.Adoptions.Where(a => a.AnimalId == animalId && a.ClientId == clientId).Single();
-            db.Adoptions.DeleteOnSubmit(adoptionToRemove);
+            adoptionToRemove.ApprovalStatus = "DENIED";          
+            db.Adoptions.DeleteOnSubmit(adoptionToRemove);      // removes the adoption from the db => instead, should just update the approval status to keep a record of denied adoptions
             db.SubmitChanges();
         }
 
-        // TODO: Shots Stuff
         internal static IQueryable<AnimalShot> GetShots(Animal animal)
         {
-            throw new NotImplementedException();
+            return db.AnimalShots.Where(a => a.AnimalId == animal.AnimalId).AsQueryable();
         }
 
         internal static void UpdateShot(string shotName, Animal animal)
         {
-            throw new NotImplementedException();
+            AnimalShot updateAnimalShot = db.AnimalShots.Where(a => a.AnimalId == animal.AnimalId).Single();
+            Shot shot = db.Shots.Where(s => s.Name == shotName).Single();
+            updateAnimalShot.DateReceived = DateTime.Now;
+            updateAnimalShot.ShotId = shot.ShotId;
+
+            db.SubmitChanges();
         }
     }
 }
