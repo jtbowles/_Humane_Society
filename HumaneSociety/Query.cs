@@ -198,10 +198,11 @@ namespace HumaneSociety
 
         internal static void AddAnimal(Animal animal)
         {
-            CreateRoom();
-            AssignAnimalToRoom(animal);
             db.Animals.InsertOnSubmit(animal);
             db.SubmitChanges();
+
+            CreateRoom();
+            AssignAnimalToRoom(animal);
         }
 
         internal static Animal GetAnimalByID(int id)

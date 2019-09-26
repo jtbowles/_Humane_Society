@@ -10,21 +10,7 @@ namespace HumaneSociety
     {
         static void Main(string[] args)
         {
-            // PointOfEntry.Run();
-            Animal animal = new Animal();
-            //animal.Name = "Cow";
-            //Query.AddAnimal(animal);
-            //Query.RemoveAnimal(animal);
-
-            Client client = new Client();
-            client.ClientId = 2;
-            animal.AnimalId = 3;
-            Query.Adopt(animal, client);
-
-
-
-
-
+            PointOfEntry.Run();
         }
     }
 }
