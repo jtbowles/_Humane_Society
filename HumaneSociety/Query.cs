@@ -163,38 +163,34 @@ namespace HumaneSociety
 
         //// TODO Items: ////
         
-        // TODO: Allow any of the CRUD operations to occur here
         internal static void RunEmployeeQueries(Employee employee, string crudOperation)
         {
             switch (crudOperation)
             {
                 case "create":
+                    // check for registration number
                     AddEmployee(employee);
                     break;
 
                 case "read":
-                    int? numToCheck = employee.EmployeeNumber;
-                    ReadEmployee(numToCheck);
-
+                    ReadEmployee(employee);
                     break;
 
                 case "update":
+                    UpdateEmployee(employee);
                     break;
 
                 case "delete":
+                    DeleteEmployee(employee);
                     break;
 
                 default:
                     break;
             }
-            throw new NotImplementedException();
-        }
-
-
-        internal static void ReadEmployee(int? employeeNumber)
-        {
-            Employee employeeFound = db.Employees.Where(e => e.EmployeeNumber == employeeNumber).Select(e => e).Single();
-            UserInterface.DisplayEmployeeInfo(employeeFound);
+<<<<<<< HEAD
+            
+=======
+>>>>>>> 81937f84145057d1e00e7ec945f921b440fb1fe4
         }
 
         internal static void AddEmployee(Employee employee)
@@ -203,11 +199,34 @@ namespace HumaneSociety
             db.SubmitChanges();
         }
 
+        internal static void ReadEmployee(Employee employee)
+        {
+            Employee employeeFound = db.Employees.Where(e => e.EmployeeNumber == employee.EmployeeNumber).Single();
+            UserInterface.DisplayEmployeeInfo(employeeFound);
+        }
+
+        internal static void UpdateEmployee(Employee employee)
+        {
+            Employee employeeToUpdate = db.Employees.Where(e => e.EmployeeNumber == employee.EmployeeNumber && e.LastName == employee.LastName).Single();
+            employeeToUpdate.FirstName = employee.FirstName;
+            employeeToUpdate.LastName = employee.LastName;
+            employeeToUpdate.Email = employee.Email;
+            db.SubmitChanges();
+        }
+
+        internal static void DeleteEmployee(Employee employee)
+        {
+            Employee employeeToDelete = db.Employees.Where(e => e.EmployeeNumber == employee.EmployeeNumber && e.LastName == employee.LastName).Single();
+            db.Employees.DeleteOnSubmit(employeeToDelete);
+            db.SubmitChanges();
+        }
+
 
         // TODO: Animal CRUD Operations
         internal static void AddAnimal(Animal animal)
         {
-            throw new NotImplementedException();
+            db.Animals.InsertOnSubmit(animal);
+            db.SubmitChanges();
         }
 
         internal static Animal GetAnimalByID(int id)
@@ -256,13 +275,65 @@ namespace HumaneSociety
 
         internal static void RemoveAnimal(Animal animal)
         {
-            throw new NotImplementedException();
+            Animal animalDelete = db.Animals.Where(a => a.AnimalId == animal.AnimalId).Select(a => a).FirstOrDefault();
+            db.Animals.DeleteOnSubmit(animalDelete);
+            db.SubmitChanges();
         }
         
-        // TODO: Animal Multi-Trait Search
-        internal static IQueryable<Animal> SearchForAnimalsByMultipleTraits(Dictionary<int, string> updates) // parameter(s)?
+        internal static IQueryable<Animal> SearchForAnimalsByMultipleTraits(Dictionary<int, string> updates) 
         {
-            throw new NotImplementedException();
+            var animalsFromDbToQueryable = db.Animals.AsQueryable();
+
+            foreach (var criterion in updates)
+            {
+                switch (criterion.Key)
+                {
+                    case 1:
+                        int categoryID = db.Categories.Where(c => c.Name == criterion.Value).Select(c => c.CategoryId).Single();
+                        var refinedCategorySearch = animalsFromDbToQueryable.Where(a => a.CategoryId == categoryID);
+                        animalsFromDbToQueryable = refinedCategorySearch;
+                        break;
+
+                    case 2:
+                        var refinedNameSearch = animalsFromDbToQueryable.Where(a => a.Name == criterion.Value);
+                        animalsFromDbToQueryable = refinedNameSearch.AsQueryable();
+                        break;
+
+                    case 3:
+                        var refinedAgeSearch = animalsFromDbToQueryable.Where(a => a.Gender == criterion.Value);
+                        animalsFromDbToQueryable = refinedAgeSearch.AsQueryable();
+                        break;
+
+                    case 4:
+                        var refinedDemeanorSearch = animalsFromDbToQueryable.Where(a => a.Demeanor == criterion.Value);
+                        animalsFromDbToQueryable = refinedDemeanorSearch.AsQueryable();
+                        break;
+
+                    case 5:
+                        var refinedKidFriendlySearch = animalsFromDbToQueryable.Where(a => a.KidFriendly == bool.Parse(criterion.Value));
+                        animalsFromDbToQueryable = refinedKidFriendlySearch.AsQueryable();
+                        break;
+
+                    case 6:
+                        var refinedPetFriendlySearch = animalsFromDbToQueryable.Where(a => a.PetFriendly == bool.Parse(criterion.Value));
+                        animalsFromDbToQueryable = refinedPetFriendlySearch.AsQueryable();
+                        break;
+
+                    case 7:
+                        var refinedWeightSearch = animalsFromDbToQueryable.Where(a => a.Weight == Int32.Parse(criterion.Value));
+                        animalsFromDbToQueryable = refinedWeightSearch.AsQueryable();
+                        break;
+
+                    case 8:
+                        var refinedIdSearch = animalsFromDbToQueryable.Where(a => a.AnimalId == Int32.Parse(criterion.Value));
+                        animalsFromDbToQueryable = refinedIdSearch.AsQueryable();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            return animalsFromDbToQueryable;
         }
          
         // TODO: Misc Animal Things
