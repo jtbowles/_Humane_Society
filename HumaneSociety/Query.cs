@@ -187,6 +187,7 @@ namespace HumaneSociety
                 default:
                     break;
             }
+
         }
 
         internal static void AddEmployee(Employee employee)
@@ -266,7 +267,6 @@ namespace HumaneSociety
                         break;
                 }
             }
-
         }
 
         internal static void RemoveAnimal(Animal animal)
@@ -292,37 +292,37 @@ namespace HumaneSociety
 
                     case 2:
                         var refinedNameSearch = animalsFromDbToQueryable.Where(a => a.Name == criterion.Value);
-                        animalsFromDbToQueryable = refinedNameSearch.AsQueryable();
+                        animalsFromDbToQueryable = refinedNameSearch;
                         break;
 
                     case 3:
                         var refinedAgeSearch = animalsFromDbToQueryable.Where(a => a.Gender == criterion.Value);
-                        animalsFromDbToQueryable = refinedAgeSearch.AsQueryable();
+                        animalsFromDbToQueryable = refinedAgeSearch;
                         break;
 
                     case 4:
                         var refinedDemeanorSearch = animalsFromDbToQueryable.Where(a => a.Demeanor == criterion.Value);
-                        animalsFromDbToQueryable = refinedDemeanorSearch.AsQueryable();
+                        animalsFromDbToQueryable = refinedDemeanorSearch;
                         break;
 
                     case 5:
                         var refinedKidFriendlySearch = animalsFromDbToQueryable.Where(a => a.KidFriendly == bool.Parse(criterion.Value));
-                        animalsFromDbToQueryable = refinedKidFriendlySearch.AsQueryable();
+                        animalsFromDbToQueryable = refinedKidFriendlySearch;
                         break;
 
                     case 6:
                         var refinedPetFriendlySearch = animalsFromDbToQueryable.Where(a => a.PetFriendly == bool.Parse(criterion.Value));
-                        animalsFromDbToQueryable = refinedPetFriendlySearch.AsQueryable();
+                        animalsFromDbToQueryable = refinedPetFriendlySearch;
                         break;
 
                     case 7:
                         var refinedWeightSearch = animalsFromDbToQueryable.Where(a => a.Weight == Int32.Parse(criterion.Value));
-                        animalsFromDbToQueryable = refinedWeightSearch.AsQueryable();
+                        animalsFromDbToQueryable = refinedWeightSearch;
                         break;
 
                     case 8:
                         var refinedIdSearch = animalsFromDbToQueryable.Where(a => a.AnimalId == Int32.Parse(criterion.Value));
-                        animalsFromDbToQueryable = refinedIdSearch.AsQueryable();
+                        animalsFromDbToQueryable = refinedIdSearch;
                         break;
 
                     default:
@@ -348,26 +348,40 @@ namespace HumaneSociety
             return db.DietPlans.Where(d => d.Name == dietPlanName).Select(d => d.DietPlanId).Single();
         }
 
-
-        // TODO: Adoption CRUD Operations
         internal static void Adopt(Animal animal, Client client)
         {
-            throw new NotImplementedException();
+            Adoption newAdoption = new Adoption();
+            newAdoption.ClientId = client.ClientId;
+            newAdoption.AnimalId = animal.AnimalId;
+            newAdoption.ApprovalStatus = "pending";
+            newAdoption.AdoptionFee = 75;
+            db.Adoptions.InsertOnSubmit(newAdoption);
+            db.SubmitChanges();
         }
 
-        internal static IQueryable<Adoption> GetPendingAdoptions()
+       internal static IQueryable<Adoption> GetPendingAdoptions()
         {
-            throw new NotImplementedException();
+            return db.Adoptions.Where(a => a.ApprovalStatus.ToUpper() == "PENDING").AsQueryable();
         }
 
         internal static void UpdateAdoption(bool isAdopted, Adoption adoption)
         {
-            throw new NotImplementedException();
+            if (isAdopted)
+            {
+                db.Adoptions.InsertOnSubmit(adoption);
+                db.SubmitChanges();
+            }
+            else
+            {
+                RemoveAdoption(adoption.AnimalId, adoption.ClientId);
+            }
         }
 
         internal static void RemoveAdoption(int animalId, int clientId)
         {
-            throw new NotImplementedException();
+            var adoptionToRemove = db.Adoptions.Where(a => a.AnimalId == animalId && a.ClientId == clientId).Single();
+            db.Adoptions.DeleteOnSubmit(adoptionToRemove);
+            db.SubmitChanges();
         }
 
         // TODO: Shots Stuff
@@ -382,8 +396,9 @@ namespace HumaneSociety
             Shot shot = db.Shots.Where(s => s.Name == shotName).Single();
             updateAnimalShot.DateReceived = DateTime.Now;
             updateAnimalShot.ShotId = shot.ShotId;
-​
+
             db.SubmitChanges();
+           
         }
     }
 }
