@@ -146,7 +146,6 @@ namespace HumaneSociety
             switch (crudOperation)
             {
                 case "create":
-                    // check for registration number
                     AddEmployee(employee);
                     break;
 
@@ -251,6 +250,11 @@ namespace HumaneSociety
         internal static void RemoveAnimal(Animal animal)
         {
             Animal animalDelete = db.Animals.Where(a => a.AnimalId == animal.AnimalId).Select(a => a).FirstOrDefault();
+            Room roomToRemove = db.Rooms.Where(r => r.AnimalId == animal.AnimalId).Single();
+
+            db.Rooms.DeleteOnSubmit(roomToRemove);
+            db.SubmitChanges();
+
             db.Animals.DeleteOnSubmit(animalDelete);
             db.SubmitChanges();
         }
